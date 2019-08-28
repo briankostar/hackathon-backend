@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import { Server } from "http";
-import { config, setConfigs } from "./configs/configs";
+import { CONFIG, setConfigs } from "./configs/configs";
 import { connectToMongo } from "./services/mongoose";
 
 const app = express();
@@ -14,7 +14,7 @@ function initExpress() {
     res.send("Server is up");
   });
 
-  app.listen(config.PORT, () => {
+  app.listen(CONFIG.PORT, () => {
     console.log("Example app listening on port 3000!");
   });
 }
