@@ -66,3 +66,5 @@ dist/
 .env.development
 .env.stage
 .env.production
+
+.vscode/
