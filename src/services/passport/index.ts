@@ -248,3 +248,87 @@ const googleStrategyConfig = new GoogleStrategy(
 );
 passport.use("google", googleStrategyConfig);
 refresh.use("google", googleStrategyConfig);
+
+// passport.serializeUser((user: any, done) => {
+//   done(null, user.id);
+// });
+
+// passport.deserializeUser((id, done) => {
+//   User.findById(id, (err, user) => {
+//     done(err, user);
+//   });
+// });
+
+/**
+ * Login Required middleware.
+ */
+export function isAuthenticated(req: any, res: any, next: any) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
+
+/**
+ * Authorization Required middleware.
+ */
+export function isAuthorized(req: any, res: any, next: any) {
+  const provider = req.path.split("/")[2];
+  const token = req.user.tokens.find((token: any) => token.kind === provider);
+  if (token) {
+    // Is there an access token expiration and access token expired?
+    // Yes: Is there a refresh token?
+    //     Yes: Does it have expiration and if so is it expired?
+    //       Yes, Quickbooks - We got nothing, redirect to res.redirect(`/auth/${provider}`);
+    //       No, Quickbooks and Google- refresh token and save, and then go to next();
+    //    No:  Treat it like we got nothing, redirect to res.redirect(`/auth/${provider}`);
+    // No: we are good, go to next():
+    if (
+      token.accessTokenExpires &&
+      moment(token.accessTokenExpires).isBefore(moment().subtract(1, "minutes"))
+    ) {
+      if (token.refreshToken) {
+        if (
+          token.refreshTokenExpires &&
+          moment(token.refreshTokenExpires).isBefore(
+            moment().subtract(1, "minutes")
+          )
+        ) {
+          res.redirect(`/auth/${provider}`);
+        } else {
+          refresh.requestNewAccessToken(
+            `${provider}`,
+            token.refreshToken,
+            (err: any, accessToken: any, refreshToken: any, params: any) => {
+              User.findById(req.user.id, (err, user: any) => {
+                user.tokens.some((tokenObject: any) => {
+                  if (tokenObject.kind === provider) {
+                    tokenObject.accessToken = accessToken;
+                    if (params.expires_in)
+                      tokenObject.accessTokenExpires = moment()
+                        .add(params.expires_in, "seconds")
+                        .format();
+                    return true;
+                  }
+                  return false;
+                });
+                req.user = user;
+                user.markModified("tokens");
+                user.save((err: Error) => {
+                  if (err) console.log(err);
+                  next();
+                });
+              });
+            }
+          );
+        }
+      } else {
+        res.redirect(`/auth/${provider}`);
+      }
+    } else {
+      next();
+    }
+  } else {
+    res.redirect(`/auth/${provider}`);
+  }
+}

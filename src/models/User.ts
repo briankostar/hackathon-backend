@@ -5,8 +5,8 @@ import { Document, Model, model, Schema } from "mongoose";
 export interface IUser {
   email: string;
   password: string;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   emailVerificationToken: string;
   emailVerified: boolean;
   facebook: string;
@@ -96,5 +96,3 @@ export const User: Model<IUserDocument> = model<IUserDocument>(
   "User",
   userSchema
 );
-
-module.exports = User;
