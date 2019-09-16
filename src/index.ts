@@ -3,6 +3,7 @@ import express from "express";
 import { Server } from "http";
 import { CONFIG, setConfigs } from "./configs/configs";
 import { connectToMongo } from "./services/mongoose";
+import { adRouter } from "./routes/ads";
 
 const app = express();
 const server = new Server(app);
@@ -13,6 +14,8 @@ function initExpress() {
   app.get("/", (req, res) => {
     res.send("Server is up");
   });
+
+  app.use("/ads", adRouter);
 
   app.listen(CONFIG.PORT, () => {
     console.log("Example app listening on port 3000!");
