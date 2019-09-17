@@ -115,10 +115,10 @@ async function facebookCallbackHandler(
           user.email = profile._json.email;
           user.facebook = profile.id;
           user.tokens.push({ kind: "facebook", accessToken });
-          user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
-          user.profile.gender = profile._json.gender;
-          user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
-          user.profile.location = profile._json.location
+          user.name = `${profile.name.givenName} ${profile.name.familyName}`;
+          user.gender = profile._json.gender;
+          user.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+          user.location = profile._json.location
             ? profile._json.location.name
             : "";
           user.save(err => {
@@ -221,9 +221,9 @@ async function googleCallbackHandler(
                 .format(),
               refreshToken
             });
-            user.profile.name = profile.displayName;
-            user.profile.gender = profile._json.gender;
-            user.profile.picture = profile._json.picture;
+            user.name = profile.displayName;
+            user.gender = profile._json.gender;
+            user.picture = profile._json.picture;
             user.save(err => {
               done(err, user);
             });

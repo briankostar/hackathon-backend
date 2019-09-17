@@ -1,6 +1,6 @@
 import { Document, Model, model, Schema } from "mongoose";
-import { IAdTask } from "./AdTask";
-import { IUser } from "./User";
+import { IAdTask, IAdTaskDocument } from "./AdTask";
+import { IUser, IUserDocument } from "./User";
 
 export enum TaskStatus {
   PENDING = "PENDING",
@@ -8,8 +8,8 @@ export enum TaskStatus {
 }
 
 export interface ICompletedTask {
-  task: IAdTask;
-  user: IUser;
+  task: IAdTaskDocument;
+  user: IUserDocument;
   status: TaskStatus;
   data: any;
 }
@@ -29,6 +29,7 @@ export const CompletedTaskSchemaObj = {
     required: true
   },
   data: {
+    type: String,
     required: true
   }
 };

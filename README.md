@@ -3,6 +3,9 @@ Boilerplate node, typescript repo to get basic user auth &amp; end points starte
 
 # Todo
 
+# Script for dummy data migrations
+    - create all mock resources
+
 ## Api endpoints:
     - GET /ads - gets all ads & ad tasks
     - POST /ads - create new ad

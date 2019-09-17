@@ -1,10 +1,10 @@
 import { Document, Model, model, Schema } from "mongoose";
-import { IAd } from "./Ad";
+import { IAd, IAdDocument } from "./Ad";
 
 export interface IAdTask {
   title: string;
   description: string;
-  ad: IAd;
+  ad: IAdDocument;
   url: string;
   amount: number;
 }

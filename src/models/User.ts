@@ -12,7 +12,12 @@ export interface IUser {
   facebook: string;
   google: string;
   tokens: any[];
-  profile: any;
+  // profile: any;
+  name: string;
+  gender: string;
+  location: string;
+  website: string;
+  picture: string;
 }
 
 export interface IUserDocument extends IUser, Document {}
@@ -30,13 +35,13 @@ const userSchema = new Schema(
     google: String,
     tokens: Array,
 
-    profile: {
-      name: String,
-      gender: String,
-      location: String,
-      website: String,
-      picture: String
-    }
+    // profile: {
+    name: String,
+    gender: String,
+    location: String,
+    website: String,
+    picture: String
+    // }
   },
   { timestamps: true }
 );

@@ -1,9 +1,9 @@
 import { Document, Model, model, Schema } from "mongoose";
-import { IAdvertiser } from "./Advertisers";
+import { IAdvertiser, IAdvertiserDocument } from "./Advertisers";
 
 export interface IAd {
   url: string;
-  advertiser: IAdvertiser;
+  advertiser: IAdvertiserDocument;
 }
 
 export interface IAdDocument extends IAd, Document {}
