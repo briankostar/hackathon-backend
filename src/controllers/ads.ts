@@ -5,13 +5,19 @@ import { USER_ERRORS } from "../miscs/errors";
 import { getAds } from "../services/db/ads";
 import { IAdRequest } from "../miscs/types";
 import { IAd, Ad } from "../models/Ad";
+import { Advertiser } from "../models/Advertisers";
+import { Advertisers } from "../../data/mock";
 
 export async function handleGetAds(req: Request, res: Response): Promise<void> {
+  // TODO. fetch ads & all tasks for each.
   const ads = await getAds();
+  for (const ad of ads) {
+    // find by object id
+  }
   res.json({ status: "success", data: ads });
 }
 
-async function saveAd(ad: IAdRequest): Promise<IAd> {
+async function saveAd(ad: any): Promise<IAd> {
   const newAd = new Ad(ad);
   const savedAd = await newAd.save();
   const returnObj = savedAd.toObject({ versionKey: false });
@@ -24,18 +30,11 @@ export async function handleCreateAd(
   res: Response
 ): Promise<void> {
   const payload: IAdRequest = req.body;
-  // have to get advertiser Id
+  // TODO. Validation & typing.
+  // TODO. get advertiser from cookie/jwt
 
-  //   const requestValidation = validateILeagueEditRequest(payload);
-  //   if (requestValidation !== "OK") {
-  //     throw boom.badRequest(
-  //       `${requestValidation.toUpperCase()}_UNDEFINED_OR_MALFORMED`
-  //     );
-  //   }
-  //   const exist = await doesLeagueExist(payload.leagueId);
-  //   if (exist) {
-  //     throw boom.badRequest(USER_ERRORS.LEAGUES.LEAGUE_EXISTS);
-  //   }
-  const ad = await saveAd(payload);
+  const existingObj = await Advertiser.findOne({ name: Advertisers[0].name });
+
+  const ad = await saveAd({ url: payload.url, advertiser: existingObj!._id });
   res.json({ status: "success", data: ad });
 }

@@ -18,7 +18,7 @@ function initExpress() {
   app.use("/ads", adRouter);
 
   app.listen(CONFIG.PORT, () => {
-    console.log("Example app listening on port 3000!");
+    console.log(`Example app listening on port ${CONFIG.PORT}!`);
   });
 }
 

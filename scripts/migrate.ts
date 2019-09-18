@@ -1,9 +1,3 @@
-// make users
-
-// make advertisers
-
-// make ads & ad tasks & completed tasks
-
 import mongoose from "mongoose";
 import { Users, Advertisers, Ads, AdTasks, CompletedTasks } from "../data/mock";
 import { User } from "../src/models/User";
@@ -16,17 +10,23 @@ async function migrate() {
   console.log("process.env.DB_URL", process.env.DB_URL);
 
   await mongoose.connect(process.env.DB_URL!, {
-    useNewUrlParser: true
-    // useCreateIndex: true
+    useNewUrlParser: true,
+    useCreateIndex: true
   });
-
-  //    loop users, make users.
-  // loop advertisers, etc etc.
+  await clearAll();
   await updateUsers();
   await updateAdvertisers();
   await updateAds();
   await updateAdTasks();
   await updateCompletedTasks();
+}
+
+async function clearAll() {
+  await User.deleteMany({}).exec();
+  await Advertiser.deleteMany({}).exec();
+  await Ad.deleteMany({}).exec();
+  await AdTask.deleteMany({}).exec();
+  await CompletedTask.deleteMany({}).exec();
 }
 
 async function updateUsers() {
@@ -84,16 +84,30 @@ async function updateAds() {
 }
 
 async function updateAdTasks() {
-  const existingObj = await Ad.findOne({ url: Ads[0].url });
+  const existingAd = await Ad.findOne({ url: Ads[0].url });
 
-  console.log("existingObj", existingObj);
+  console.log("existingAd", existingAd);
 
   for (const adTask of AdTasks) {
     const adTaskDocument = new AdTask({
       ...adTask,
-      ad: existingObj!._id
+      ad: existingAd!._id
     });
     await adTaskDocument.save();
+    // when creating a task, add it to ad's tasks array
+    // let ad = await Ad.findOne({ _id: existingObj!._id }).exec();
+    if (existingAd) {
+      console.log("existingAd.tasks", existingAd.tasks);
+
+      if (existingAd.tasks === undefined) {
+        existingAd.tasks = [adTaskDocument._id];
+      } else {
+        console.log("existingAd", existingAd);
+
+        existingAd.tasks.push(adTaskDocument._id);
+      }
+      existingAd.save();
+    }
   }
 }
 
